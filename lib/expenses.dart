@@ -13,7 +13,7 @@ class Expenses extends StatefulWidget {
 class_ExpensesState extends State<Exorenses> {
   void _openAddExpenseOverlay() {
     showModalBottomSheet(context: context,
-     builder: (ctx) => Text('Add Expense'),);
+     builder: (ctx) => NewExpense());
   }
 
   final List<Expense> _registeredExpenses = [
