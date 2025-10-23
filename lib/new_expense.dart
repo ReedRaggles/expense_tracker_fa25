@@ -11,20 +11,27 @@ class NewExpense extends StatefulWidget{
 class _NewExpenseState extends State<NewExpense> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
+  DateTime? _selectedDate;
   @override
   void dispose(){
     _titleController.dispose();
     _amountController.dispose();
     super.dispose();
   }
-var _enteredTitle = '';
 
-
-
-void _saveTitleInput(String inputValue) {
-  _enteredTitle = inputValue;
-  print(_enteredTitle);
-}
+  void _presentDatePicker() async {
+    final now = DateTime.now();
+    final firstDate = DateTime(now.year - 1, now.month, now.day);
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: firstDate,
+      lastDate: now,
+    );
+    setState((){
+      _selectedDate = pickedDate;
+    });
+  }
 
 @override
 Widget build(BuildContext context) {
@@ -51,12 +58,18 @@ Widget build(BuildContext context) {
         ),
             ),
             const SizedBox(width: 16),
-            Expanded( child: Row(mainAxisAlignment: MainAxisAlignment.end,
+            Expanded(
+               child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text("Selected Date"),
+              Text(
+                _selectedDate == null
+                ? 'Select A Date'
+              : formatter.format(_selectedDate!),
+              ),
               IconButton(
-                onPressed: () {},
+                onPressed: _presentDatePicker,
                 icon: const Icon(Icons.calendar_month),
                 ),
             ],
@@ -65,6 +78,15 @@ Widget build(BuildContext context) {
           ],
         ),
         Row(children: [
+          DropdownButton(
+            items: Category.values.map(
+              (category) => DropDownMenuItem(
+                child: Text(category.name.toString(),)
+              )
+            ).toList() 
+          
+          , onChanged: onChanged),
+          Spacer(),
           ElevatedButton(onPressed: (){
             print(_titleController.text);
             print(_amountController.text);
