@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:expense_tracker_fa25/models/expense.dart';
+
+final formatter = DateFormat.yMd();
 
 class NewExpense extends StatefulWidget{
-  const NewExpense({super.key});
-
+  const NewExpense({super.key, required this.onAddExpense});
+final void Function(Expense expense) onAddExpense;
   State<NewExpense> createState() {
     return _NewExpenseState();
   }
@@ -12,12 +16,19 @@ class _NewExpenseState extends State<NewExpense> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime? _selectedDate;
+  Category _selectedCategory = Category.leisure;
+
   @override
   void dispose(){
     _titleController.dispose();
     _amountController.dispose();
     super.dispose();
   }
+
+void _submitExpenseData() {
+  final enteredAmount = double.tryParse(_amountController.text);
+  final amountIsInvalid 
+}
 
   void _presentDatePicker() async {
     final now = DateTime.now();
