@@ -4,6 +4,7 @@ class ChartBar extends StatelessWidget {
   const ChartBar({super.key, required this.fill});
 
   final double fill;
+  @override
   Widget build(BuildContext context) {
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;

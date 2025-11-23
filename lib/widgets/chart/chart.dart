@@ -26,6 +26,7 @@ class Chart extends StatelessWidget {
     return maxTotalExpense;
   }
 
+  @override
   Widget build(BuildContext context) {
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
