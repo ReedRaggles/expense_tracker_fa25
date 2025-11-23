@@ -1,5 +1,7 @@
-import'package:expense_tracker_fa25/widgets/expenses_list/expenses_list.dart';
+import 'package:expense_tracker_fa25/widgets/chart/chart.dart';
+import 'package:expense_tracker_fa25/widgets/expenses_list/expenses_list.dart';
 import 'package:expense_tracker_fa25/models/expense.dart';
+import 'package:expense_tracker_fa25/widgets/new_expense.dart';
 import 'package:flutter/material.dart';
 
 class Expenses extends StatefulWidget {
@@ -10,35 +12,42 @@ class Expenses extends StatefulWidget {
   }
 }
 
-class_ExpensesState extends State<Exorenses> {
+class _ExpensesState extends State<Expenses> {
   void _openAddExpenseOverlay() {
-    showModalBottomSheet(context: context,
-     builder: (ctx) => NewExpense(onAddExpense: _addExpense,));
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => NewExpense(onAddExpense: _addExpense),
+      isScrollControlled: true,
+    );
   }
 
-void _addExpense(Expense expense)
-{
-  setState((){
-    _registeredExpenses.add(expense);
-  });
-}
-void _removeExpense(Expense expense)
-{
-  setState((){
-    _registeredExpenses.remove(expense);
-  });
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(context: Text('Expense Deleted'),
-    duration: Duration(seconds: 3),
-    action: SnackBarAction(label: 'Undo', 
-    onPressed: () {
-      setState((){
-        _registeredExpenses.insert(expenseIndex, expense);
-      });
-    }),
-    ),
-  )
-}
+  void _addExpense(Expense expense) {
+    setState(() {
+      _registeredExpenses.add(expense);
+    });
+  }
+
+  void _removeExpense(Expense expense) {
+    int expenseIndex = _registeredExpenses.indexOf(expense);
+    setState(() {
+      _registeredExpenses.remove(expense);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Expense Deleted'),
+        duration: Duration(seconds: 3),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            setState(() {
+              _registeredExpenses.insert(expenseIndex, expense);
+            });
+          },
+        ),
+      ),
+    );
+  }
+
   final List<Expense> _registeredExpenses = [
     Expense(
       title: 'Cheeseburger',
@@ -50,36 +59,53 @@ void _removeExpense(Expense expense)
       title: 'Movie Ticket',
       amount: 18.99,
       date: DateTime.now(),
-      category: Category.lesure,
+      category: Category.leisure,
+    ),
+    Expense(
+      title: 'Train ticket',
+      amount: 34.00,
+      date: DateTime.now(),
+      category: Category.travel,
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
     Widget mainContent = const Center(
       child: Text("Click the + button to add an Expense!"),
-      );
+    );
 
-      if (_registeredExpenses.isNotEmpty) {
-        maincontent = ExpensesList(
-          expenses: _registeredExpenses,
-          onRemoveExpense: _removeExpense,
-        );
-      }
+    if (_registeredExpenses.isNotEmpty) {
+      mainContent = ExpensesList(
+        expenses: _registeredExpenses,
+        onRemoveExpense: _removeExpense,
+      );
+    }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Expense Tracker'),
+        title: const Text('Expense Tracker'
+        ),
         actions: [
           IconButton(
-            onPressed: _openAddExpenseOverlay, 
-            icon: const Icon(Icons.add))],
-      ),
-      body: Column(
-        children: [
-          Text("Chart"),
-          Expanded(child: mainContent,),
+            onPressed: _openAddExpenseOverlay,
+            icon: const Icon(Icons.add),
+          ),
         ],
       ),
+      body: width < 600
+          ? Column(
+              children: [
+                Chart(expenses: _registeredExpenses),
+                Expanded(child: mainContent),
+              ],
+            )
+          : Row(
+              children: [
+                Expanded(child:Chart(expenses: _registeredExpenses)),
+                Expanded(child: mainContent),
+              ],
+            ),
     );
   }
 }
